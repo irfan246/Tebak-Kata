@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class GameScreen extends StatefulWidget {
@@ -9,20 +11,41 @@ class GameScreen extends StatefulWidget {
 
 class _GameScreenState extends State<GameScreen> {
   final TextEditingController textController = TextEditingController();
-  String textQuestion = 'ayam';
+  List<String> textQuestion = ['ayam', 'ikan', 'sapi'];
+  String currentText = '';
 
   void checkAnswer(String answer) {
     if (textController.text == answer) {
       setState(() {
-        textQuestion = "berhasil";
+        generateTextQuestion();
       });
     } else {
       setState(() {
-        textQuestion = "gagal";
-        textController.clear();
-        textQuestion = "ayam";
+        Dialog(
+          backgroundColor: Colors.blue,
+          child: Text("Salah"),
+        );
       });
     }
+  }
+
+  void generateTextQuestion() {
+    final random = Random();
+    String newText;
+
+    do {
+      newText = textQuestion[random.nextInt(textQuestion.length)];
+    } while (newText == currentText);
+
+    setState(() {
+      currentText = newText;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    generateTextQuestion();
   }
 
   @override
@@ -34,7 +57,7 @@ class _GameScreenState extends State<GameScreen> {
           Expanded(
               flex: 2,
               child: Center(
-                child: Text(textQuestion),
+                child: Text(currentText),
               )),
           Expanded(
               child: Column(
@@ -55,7 +78,7 @@ class _GameScreenState extends State<GameScreen> {
                   color: Colors.amber,
                   onPressed: () {
                     setState(() {
-                      checkAnswer(textQuestion);
+                      checkAnswer(currentText);
                     });
                   })
             ],
